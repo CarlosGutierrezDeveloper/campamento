@@ -4,7 +4,8 @@
 
 import { obtenerDatos, registrarAbono, guardarFechas } from './api.js';
 import {
-  obtenerUrlScript, guardarUrlScript, hayConexionConfigurada
+  obtenerUrlScript, guardarUrlScript, hayConexionConfigurada,
+  establecerRangoEvento, obtenerRangoEvento
 } from './config.js';
 import {
   formatearCOP, parsearValorCOP, formatearMilesEnVivo, fechaHoyISO
@@ -47,6 +48,10 @@ async function cargarDatos() {
     estado.precioNoche = Number(datos.precioNoche) || estado.precioNoche;
     estado.deudores = datos.deudores || [];
 
+    // Rango del evento parametrizable (Configuración!B3 y B4)
+    establecerRangoEvento(datos.fechaInicioEvento, datos.fechaFinEvento);
+    aplicarRangoEvento();
+
     $('tarifaActual').textContent = formatearCOP(estado.precioNoche);
     const nombreActual = estado.deudorActual?.nombre || '';
     poblarSelectDeudores($('selectDeudor'), estado.deudores, nombreActual);
@@ -56,6 +61,25 @@ async function cargarDatos() {
   } catch (error) {
     manejarError(error);
   }
+}
+
+/** Sincroniza franja de brasas, límites de fechas y subtítulo con el rango vigente. */
+function aplicarRangoEvento() {
+  const { inicio, fin } = obtenerRangoEvento();
+  $('fechaEntrada').min = inicio;
+  $('fechaEntrada').max = fin;
+  $('fechaSalida').min = inicio;
+  $('fechaSalida').max = fin;
+  construirFranjaNoches($('franjaNoches'), manejarToqueNoche);
+
+  const sub = document.getElementById('subtituloEvento');
+  if (sub) {
+    const opciones = { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' };
+    const fi = new Date(inicio + 'T12:00:00Z').toLocaleDateString('es-CO', opciones);
+    const ff = new Date(fin + 'T12:00:00Z').toLocaleDateString('es-CO', opciones);
+    sub.textContent = `Gestor de cartera · ${fi} → ${ff}`;
+  }
+  refrescarEstadia();
 }
 
 // ---------------- Selección de deudor ----------------

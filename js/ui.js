@@ -6,16 +6,20 @@ import {
   calcularNoches, calcularTotal, sumarAbonos, calcularSaldo,
   formatearCOP, formatearFechaCorta
 } from './calculations.js';
-import { FECHA_INICIO_EVENTO, FECHA_FIN_EVENTO } from './config.js';
+import { obtenerRangoEvento } from './config.js';
 
 const $ = (id) => document.getElementById(id);
 
-// ---------- Lista de noches del evento (23 dic … 31 dic + 1 ene = 9 noches) ----------
+const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun',
+                      'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
+// ---------- Lista de noches del evento (rango parametrizable) ----------
 export function nochesDelEvento() {
+  const { inicio, fin } = obtenerRangoEvento();
   const noches = [];
-  const cursor = new Date(FECHA_INICIO_EVENTO + 'T12:00:00Z');
-  const fin = new Date(FECHA_FIN_EVENTO + 'T12:00:00Z');
-  while (cursor < fin) {
+  const cursor = new Date(inicio + 'T12:00:00Z');
+  const limite = new Date(fin + 'T12:00:00Z');
+  while (cursor < limite && noches.length < 62) { // tope de seguridad: 2 meses
     noches.push(cursor.toISOString().slice(0, 10));
     cursor.setUTCDate(cursor.getUTCDate() + 1);
   }
@@ -25,8 +29,11 @@ export function nochesDelEvento() {
 // ---------- Franja de brasas (elemento firma) ----------
 export function construirFranjaNoches(contenedor, alTocarNoche) {
   contenedor.innerHTML = '';
-  const meses = { 11: 'dic', 0: 'ene' };
-  nochesDelEvento().forEach((fechaISO) => {
+  const noches = nochesDelEvento();
+  // Columnas según la cantidad de noches (máx. 9 por fila para tablet)
+  contenedor.style.gridTemplateColumns =
+    `repeat(${Math.min(noches.length, 9) || 1}, 1fr)`;
+  noches.forEach((fechaISO) => {
     const f = new Date(fechaISO + 'T12:00:00Z');
     const boton = document.createElement('button');
     boton.type = 'button';
@@ -36,7 +43,7 @@ export function construirFranjaNoches(contenedor, alTocarNoche) {
     boton.innerHTML = `
       <span class="brasa__punto" aria-hidden="true"></span>
       <span class="brasa__dia">${f.getUTCDate()}</span>
-      <span class="brasa__mes">${meses[f.getUTCMonth()] || ''}</span>
+      <span class="brasa__mes">${MESES_CORTOS[f.getUTCMonth()]}</span>
     `;
     boton.addEventListener('click', () => alTocarNoche(fechaISO));
     contenedor.appendChild(boton);
