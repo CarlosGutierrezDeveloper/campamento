@@ -1,0 +1,508 @@
+/* ============================================================
+   CAMPAMENTO FIN DE AÑO 2026 · Tema "Noches de fogata"
+   Paleta: cielo nocturno + brasas ámbar + luz de estrella
+   ============================================================ */
+
+:root {
+  --noche: #0F1B2D;        /* fondo: cielo nocturno */
+  --noche-2: #16263D;      /* tarjetas */
+  --noche-3: #1E3350;      /* controles / hover */
+  --brasa: #F59E4C;        /* ámbar de brasa */
+  --fuego: #E4572E;        /* naranja fuego (alertas / saldo) */
+  --estrella: #F4EFE6;     /* texto principal */
+  --humo: #90A4BD;         /* texto secundario */
+  --pino: #7FB185;         /* éxito / pagado */
+  --borde: rgba(244, 239, 230, 0.10);
+
+  --f-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --f-cuerpo: "Instrument Sans", system-ui, sans-serif;
+  --f-cifra: "Spline Sans Mono", ui-monospace, monospace;
+
+  --radio: 16px;
+  --sombra: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { color-scheme: dark; }
+
+body {
+  font-family: var(--f-cuerpo);
+  background: var(--noche);
+  color: var(--estrella);
+  min-height: 100vh;
+  padding: clamp(12px, 3vw, 32px);
+}
+
+/* ---------- Cielo estrellado (fondo fijo, CSS puro) ---------- */
+.cielo {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1px 1px at 12% 18%, rgba(244,239,230,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 28% 64%, rgba(244,239,230,.5) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 41% 9%,  rgba(244,239,230,.8) 50%, transparent 51%),
+    radial-gradient(1px 1px at 57% 38%, rgba(244,239,230,.45) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 68% 74%, rgba(244,239,230,.6) 50%, transparent 51%),
+    radial-gradient(1px 1px at 79% 22%, rgba(244,239,230,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 88% 52%, rgba(244,239,230,.5) 50%, transparent 51%),
+    radial-gradient(2px 2px at 94% 12%, rgba(245,158,76,.55) 50%, transparent 51%),
+    radial-gradient(ellipse 80% 45% at 50% 118%, rgba(228,87,46,.16), transparent 65%),
+    linear-gradient(180deg, #0A1322 0%, var(--noche) 55%, #142033 100%);
+}
+
+/* ============================ ENCABEZADO ============================ */
+.encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1180px;
+  margin: 0 auto 28px;
+}
+
+.encabezado__titulo { display: flex; align-items: center; gap: 14px; }
+
+.encabezado__emoji { font-size: 2.4rem; filter: drop-shadow(0 0 14px rgba(245,158,76,.45)); }
+
+.encabezado h1 {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(1.4rem, 3.4vw, 2.1rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.encabezado__sub {
+  color: var(--humo);
+  font-size: 0.86rem;
+  margin-top: 4px;
+}
+
+.encabezado__acciones { display: flex; align-items: center; gap: 10px; }
+
+.chip-tarifa {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  padding: 8px 16px;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: var(--noche-2);
+}
+
+.chip-tarifa__etiqueta {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--humo);
+}
+
+.chip-tarifa__valor {
+  font-family: var(--f-cifra);
+  font-weight: 700;
+  color: var(--brasa);
+  font-size: 1.02rem;
+}
+
+/* ============================ TABLERO ============================ */
+.tablero {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 22px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .tablero { grid-template-columns: 1fr; }
+}
+
+.columna { display: flex; flex-direction: column; gap: 22px; }
+
+/* ============================ TARJETAS ============================ */
+.tarjeta {
+  background: var(--noche-2);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: clamp(18px, 3vw, 26px);
+  box-shadow: var(--sombra);
+}
+
+.tarjeta__titulo {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tarjeta__icono { font-size: 1.2rem; }
+
+.tarjeta__ayuda {
+  color: var(--humo);
+  font-size: 0.84rem;
+  margin: -8px 0 16px;
+}
+
+.tarjeta--vacia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 240px;
+  color: var(--humo);
+  text-align: center;
+  border-style: dashed;
+}
+
+.tarjeta--vacia__icono { font-size: 2.6rem; opacity: 0.8; }
+
+/* ============================ CAMPOS ============================ */
+.campo { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+.campo__etiqueta {
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--humo);
+  font-weight: 600;
+}
+
+.campo__control {
+  font-family: var(--f-cuerpo);
+  font-size: 1rem;
+  color: var(--estrella);
+  background: var(--noche-3);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 13px 14px;
+  min-height: 48px;              /* táctil: tablet */
+  width: 100%;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.campo__control:focus-visible {
+  outline: none;
+  border-color: var(--brasa);
+  box-shadow: 0 0 0 3px rgba(245, 158, 76, 0.25);
+}
+
+.campo__control--cifra {
+  font-family: var(--f-cifra);
+  font-weight: 700;
+  font-size: 1.15rem;
+  text-align: right;
+}
+
+.fila-fechas { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+
+/* ============================================================
+   ELEMENTO FIRMA · La fogata: franja de 9 noches como brasas
+   ============================================================ */
+.fogata {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.brasa {
+  --encendida: 0;
+  appearance: none;
+  border: 1px solid var(--borde);
+  background: var(--noche-3);
+  border-radius: 12px;
+  padding: 10px 2px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  min-height: 64px;
+  transition: transform .12s, background .2s, border-color .2s, box-shadow .25s;
+}
+
+.brasa__punto {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #2A3E5C;
+  transition: background .25s, box-shadow .25s;
+}
+
+.brasa__dia {
+  font-family: var(--f-cifra);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--humo);
+}
+
+.brasa__mes {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--humo);
+}
+
+.brasa:hover { transform: translateY(-2px); border-color: rgba(245,158,76,.4); }
+
+.brasa:focus-visible {
+  outline: none;
+  border-color: var(--brasa);
+  box-shadow: 0 0 0 3px rgba(245,158,76,.3);
+}
+
+.brasa--encendida {
+  background: linear-gradient(180deg, rgba(245,158,76,.18), rgba(228,87,46,.10));
+  border-color: rgba(245,158,76,.55);
+}
+
+.brasa--encendida .brasa__punto {
+  background: radial-gradient(circle at 35% 30%, #FFD9A0, var(--brasa) 55%, var(--fuego));
+  box-shadow: 0 0 10px rgba(245,158,76,.8), 0 0 22px rgba(228,87,46,.45);
+  animation: titilar 2.2s ease-in-out infinite;
+}
+
+.brasa--encendida .brasa__dia { color: var(--estrella); }
+
+@keyframes titilar {
+  0%, 100% { box-shadow: 0 0 10px rgba(245,158,76,.8), 0 0 22px rgba(228,87,46,.45); }
+  50%      { box-shadow: 0 0 6px rgba(245,158,76,.55), 0 0 14px rgba(228,87,46,.3); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brasa--encendida .brasa__punto { animation: none; }
+  .brasa, .campo__control, .btn { transition: none; }
+}
+
+@media (max-width: 520px) {
+  .fogata { grid-template-columns: repeat(9, minmax(34px, 1fr)); gap: 5px; }
+  .brasa { min-height: 56px; }
+}
+
+/* ============================ CÁLCULO EN VIVO ============================ */
+.calculo-vivo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: var(--noche);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.calculo-vivo__item { display: flex; flex-direction: column; align-items: center; }
+
+.calculo-vivo__num {
+  font-family: var(--f-cifra);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+.calculo-vivo__item--total .calculo-vivo__num { color: var(--brasa); font-size: 1.45rem; }
+
+.calculo-vivo__lbl { font-size: 0.68rem; color: var(--humo); text-transform: uppercase; letter-spacing: .07em; }
+
+.calculo-vivo__x { color: var(--humo); font-size: 1.1rem; }
+
+/* ============================ BOTONES ============================ */
+.btn {
+  font-family: var(--f-cuerpo);
+  font-weight: 600;
+  font-size: 0.98rem;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  min-height: 50px;
+  cursor: pointer;
+  width: 100%;
+  transition: transform .1s, filter .15s, box-shadow .2s;
+}
+
+.btn:active { transform: scale(.985); }
+
+.btn--primario {
+  background: linear-gradient(135deg, var(--brasa), var(--fuego));
+  color: #23120A;
+  box-shadow: 0 4px 18px rgba(228, 87, 46, 0.35);
+}
+
+.btn--primario:hover { filter: brightness(1.07); }
+
+.btn--secundario {
+  background: var(--noche-3);
+  color: var(--estrella);
+  border: 1px solid var(--borde);
+}
+
+.btn--secundario:hover { border-color: rgba(245,158,76,.4); }
+
+.btn--fantasma {
+  background: transparent;
+  color: var(--estrella);
+  border: 1px solid var(--borde);
+  width: auto;
+  min-height: 44px;
+  padding: 10px 14px;
+  font-size: 1.05rem;
+}
+
+.btn--fantasma:hover { background: var(--noche-2); }
+
+.btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* ============================ RESUMEN ============================ */
+.resumen__nombre {
+  font-family: var(--f-display);
+  font-weight: 800;
+  font-size: clamp(1.2rem, 2.6vw, 1.55rem);
+  margin: -6px 0 18px;
+  letter-spacing: -0.01em;
+}
+
+.estado-cuenta {
+  background: var(--noche);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 22px;
+}
+
+.estado-cuenta__fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  color: var(--humo);
+  font-size: 0.92rem;
+}
+
+.estado-cuenta__fila--saldo {
+  border-top: 1px dashed var(--borde);
+  margin-top: 6px;
+  padding-top: 14px;
+  color: var(--estrella);
+  font-weight: 600;
+}
+
+.cifra {
+  font-family: var(--f-cifra);
+  font-weight: 700;
+  font-size: 1.12rem;
+  color: var(--estrella);
+}
+
+.cifra--positiva { color: var(--pino); }
+
+.estado-cuenta__fila--saldo .cifra { font-size: 1.4rem; color: var(--fuego); }
+
+.estado-cuenta__fila--saldo.pagado .cifra { color: var(--pino); }
+
+.barra-progreso {
+  height: 8px;
+  background: var(--noche-3);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 14px 0 8px;
+}
+
+.barra-progreso__relleno {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brasa), var(--pino));
+  transition: width .5s ease;
+}
+
+.estado-cuenta__estado { font-size: 0.8rem; color: var(--humo); text-align: right; }
+
+.resumen__subtitulo {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 0.98rem;
+  margin-bottom: 12px;
+}
+
+.historial { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+.historial li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--noche);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 0.9rem;
+}
+
+.historial__fecha { color: var(--humo); font-family: var(--f-cifra); font-size: 0.82rem; }
+
+.historial__monto { font-family: var(--f-cifra); font-weight: 700; color: var(--pino); }
+
+.historial__vacio { color: var(--humo); justify-content: center; border-style: dashed; }
+
+/* ============================ MODAL ============================ */
+.modal {
+  border: none;
+  border-radius: var(--radio);
+  background: var(--noche-2);
+  color: var(--estrella);
+  max-width: 520px;
+  width: calc(100vw - 40px);
+  padding: 0;
+  box-shadow: var(--sombra);
+}
+
+.modal::backdrop { background: rgba(6, 11, 20, 0.75); backdrop-filter: blur(3px); }
+
+.modal__contenido { padding: 26px; display: flex; flex-direction: column; gap: 16px; }
+
+.modal h2 { font-family: var(--f-display); font-size: 1.15rem; }
+
+.modal__ayuda { color: var(--humo); font-size: 0.86rem; line-height: 1.5; }
+
+.modal__ayuda code {
+  font-family: var(--f-cifra);
+  background: var(--noche);
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.modal__botones { display: flex; gap: 12px; justify-content: flex-end; }
+
+.modal__botones .btn { width: auto; }
+
+/* ============================ TOAST ============================ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120%);
+  background: var(--noche-3);
+  border: 1px solid var(--borde);
+  color: var(--estrella);
+  padding: 14px 22px;
+  border-radius: 12px;
+  box-shadow: var(--sombra);
+  font-size: 0.92rem;
+  transition: transform .3s ease;
+  max-width: calc(100vw - 40px);
+  z-index: 50;
+}
+
+.toast--visible { transform: translateX(-50%) translateY(0); }
+
+.toast--exito { border-color: rgba(127, 177, 133, .6); }
+
+.toast--error { border-color: rgba(228, 87, 46, .6); }
