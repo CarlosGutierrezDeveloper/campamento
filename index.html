@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campamento Fin de Año 2026 · Gestor de Cartera</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=Spline+Sans+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="cielo" aria-hidden="true"></div>
+
+  <header class="encabezado">
+    <div class="encabezado__titulo">
+      <span class="encabezado__emoji" aria-hidden="true">🏕️</span>
+      <div>
+        <h1>Campamento Fin de Año</h1>
+        <p class="encabezado__sub">Gestor de cartera · 23 dic 2026 → 1 ene 2027</p>
+      </div>
+    </div>
+    <div class="encabezado__acciones">
+      <div class="chip-tarifa" id="chipTarifa" title="Tarifa leída desde Google Sheets">
+        <span class="chip-tarifa__etiqueta">Tarifa por noche</span>
+        <span class="chip-tarifa__valor" id="tarifaActual">—</span>
+      </div>
+      <button class="btn btn--fantasma" id="btnConfig" aria-label="Configuración de conexión">⚙️</button>
+      <button class="btn btn--fantasma" id="btnRecargar" aria-label="Recargar datos">↻</button>
+    </div>
+  </header>
+
+  <main class="tablero">
+    <!-- ==================== COLUMNA IZQUIERDA: OPERACIÓN ==================== -->
+    <section class="columna columna--operacion">
+
+      <article class="tarjeta">
+        <h2 class="tarjeta__titulo"><span class="tarjeta__icono">👤</span> Deudor</h2>
+        <label class="campo">
+          <span class="campo__etiqueta">Seleccione un deudor</span>
+          <select id="selectDeudor" class="campo__control">
+            <option value="">Cargando deudores…</option>
+          </select>
+        </label>
+      </article>
+
+      <article class="tarjeta" id="tarjetaEstadia" hidden>
+        <h2 class="tarjeta__titulo"><span class="tarjeta__icono">🌙</span> Noches de estadía</h2>
+        <p class="tarjeta__ayuda">Toca la primera y la última noche, o usa las fechas.</p>
+
+        <!-- Elemento firma: franja de brasas -->
+        <div class="fogata" id="franjaNoches" role="group" aria-label="Selector de noches"></div>
+
+        <div class="fila-fechas">
+          <label class="campo">
+            <span class="campo__etiqueta">Fecha de entrada</span>
+            <input type="date" id="fechaEntrada" class="campo__control"
+                   min="2026-12-23" max="2027-01-01">
+          </label>
+          <label class="campo">
+            <span class="campo__etiqueta">Fecha de salida</span>
+            <input type="date" id="fechaSalida" class="campo__control"
+                   min="2026-12-23" max="2027-01-01">
+          </label>
+        </div>
+
+        <div class="calculo-vivo" id="calculoVivo" hidden>
+          <div class="calculo-vivo__item">
+            <span class="calculo-vivo__num" id="nochesCalc">0</span>
+            <span class="calculo-vivo__lbl">noches</span>
+          </div>
+          <span class="calculo-vivo__x">×</span>
+          <div class="calculo-vivo__item">
+            <span class="calculo-vivo__num" id="tarifaCalc">$0</span>
+            <span class="calculo-vivo__lbl">por noche</span>
+          </div>
+          <span class="calculo-vivo__x">=</span>
+          <div class="calculo-vivo__item calculo-vivo__item--total">
+            <span class="calculo-vivo__num" id="totalCalc">$0</span>
+            <span class="calculo-vivo__lbl">total a pagar</span>
+          </div>
+        </div>
+
+        <button class="btn btn--secundario" id="btnGuardarFechas">💾 Guardar fechas de estadía</button>
+      </article>
+
+      <article class="tarjeta" id="tarjetaAbono" hidden>
+        <h2 class="tarjeta__titulo"><span class="tarjeta__icono">💰</span> Registrar abono</h2>
+        <div class="fila-fechas">
+          <label class="campo">
+            <span class="campo__etiqueta">Fecha de pago</span>
+            <input type="date" id="fechaPago" class="campo__control">
+          </label>
+          <label class="campo">
+            <span class="campo__etiqueta">Valor a abonar (COP)</span>
+            <input type="text" id="valorAbono" class="campo__control campo__control--cifra"
+                   inputmode="numeric" placeholder="24.000" autocomplete="off">
+          </label>
+        </div>
+        <button class="btn btn--primario" id="btnRegistrarPago">
+          ➕ Registrar pago y actualizar Google Sheets
+        </button>
+      </article>
+    </section>
+
+    <!-- ==================== COLUMNA DERECHA: RESUMEN ==================== -->
+    <section class="columna columna--resumen">
+      <article class="tarjeta tarjeta--resumen" id="panelResumen" hidden>
+        <h2 class="tarjeta__titulo"><span class="tarjeta__icono">📊</span> Resumen inmediato</h2>
+        <p class="resumen__nombre" id="resumenNombre">—</p>
+
+        <div class="estado-cuenta">
+          <div class="estado-cuenta__fila">
+            <span>Total del campamento</span>
+            <strong class="cifra" id="resTotal">$0</strong>
+          </div>
+          <div class="estado-cuenta__fila">
+            <span>Total abonado</span>
+            <strong class="cifra cifra--positiva" id="resAbonado">$0</strong>
+          </div>
+          <div class="estado-cuenta__fila estado-cuenta__fila--saldo" id="filaSaldo">
+            <span>Saldo pendiente</span>
+            <strong class="cifra" id="resSaldo">$0</strong>
+          </div>
+          <div class="barra-progreso" aria-hidden="true">
+            <div class="barra-progreso__relleno" id="barraProgreso"></div>
+          </div>
+          <p class="estado-cuenta__estado" id="estadoPago"></p>
+        </div>
+
+        <h3 class="resumen__subtitulo">📋 Historial de pagos</h3>
+        <ol class="historial" id="listaHistorial">
+          <li class="historial__vacio">Sin abonos registrados todavía.</li>
+        </ol>
+      </article>
+
+      <article class="tarjeta tarjeta--vacia" id="panelVacio">
+        <span class="tarjeta--vacia__icono" aria-hidden="true">⛺</span>
+        <p>Selecciona un deudor para ver su estado de cuenta.</p>
+      </article>
+    </section>
+  </main>
+
+  <!-- ==================== MODAL DE CONFIGURACIÓN ==================== -->
+  <dialog class="modal" id="modalConfig">
+    <form method="dialog" class="modal__contenido">
+      <h2>⚙️ Conexión con Google Sheets</h2>
+      <p class="modal__ayuda">
+        Pega la URL del Web App de Google Apps Script (termina en <code>/exec</code>).
+        Se guarda solo en este navegador (localStorage), nunca en el código.
+      </p>
+      <label class="campo">
+        <span class="campo__etiqueta">URL del Apps Script</span>
+        <input type="url" id="inputUrlScript" class="campo__control"
+               placeholder="https://script.google.com/macros/s/…/exec">
+      </label>
+      <div class="modal__botones">
+        <button class="btn btn--fantasma" value="cancel">Cancelar</button>
+        <button class="btn btn--primario" id="btnGuardarConfig" value="default">Guardar conexión</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
